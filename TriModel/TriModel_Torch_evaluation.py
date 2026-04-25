@@ -233,74 +233,88 @@ def save_results(metrics, output_path="outputs_trimodel/Evaluation.txt"):
 if __name__ == "__main__":
     DEVICE = "cpu"  # change to "cuda" if available
     BATCH_SIZE = 256  # Batch size for evaluation
+    EMBEDDING_DIMS = [100, 200, 300]
 
-    MODEL_PATH = "outputs_trimodel/trimodel_model.pt"
-    DATA_DIR = "data/trimodel"
-    OUTPUT_PATH = "outputs_trimodel/Evaluation.txt"
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    DATA_DIR = os.path.join(PROJECT_ROOT, "data", "trimodel")
+    OUTPUT_ROOT = os.path.join(PROJECT_ROOT, "outputs_trimodel")
 
-    # Load model
-    print("Loading model...")
-    model, entity2id, relation2id = load_model(MODEL_PATH, DEVICE)
-    num_entities = len(entity2id)
-    num_relations = len(relation2id)
-    
-    print(f"Model loaded: {num_entities} entities, {num_relations} relations")
-    print(f"Embedding dim: {model.dim} (total: {model.dim * 3} per entity/relation)")
+    train_df = load_triples(os.path.join(DATA_DIR, "train.txt"))
+    test_df = load_triples(os.path.join(DATA_DIR, "test.txt"))
+    valid_path = os.path.join(DATA_DIR, "valid.txt")
+    valid_df = load_triples(valid_path) if os.path.exists(valid_path) else None
 
-    # Load data
-    train_df = load_triples(f"{DATA_DIR}/train.txt")
-    test_df = load_triples(f"{DATA_DIR}/test.txt")
-    
-    print(f"\nTrain triples: {len(train_df)}")
-    print(f"Test triples: {len(test_df)}")
-    
-    # Filter test data to only include entities/relations known to the model
-    test_df_filtered = test_df[
-        (test_df["source"].isin(entity2id.keys())) &
-        (test_df["relation"].isin(relation2id.keys())) &
-        (test_df["target"].isin(entity2id.keys()))
-    ].reset_index(drop=True)
-    
-    print(f"Filtered test set: {len(test_df_filtered)} triples")
-    
-    # Encode test triples to tensor
-    test_triples = encode_triples(test_df_filtered, entity2id, relation2id)
+    summary_rows = []
 
-    # True triples for filtering (include BOTH train and test for proper filtered ranking)
-    all_true = triples_to_id_set(train_df, entity2id, relation2id)
-    all_true |= triples_to_id_set(test_df_filtered, entity2id, relation2id)
-    
-    # Also load validation set if available
-    try:
-        valid_df = load_triples(f"{DATA_DIR}/valid.txt")
-        valid_df_filtered = valid_df[
-            (valid_df["source"].isin(entity2id.keys())) &
-            (valid_df["relation"].isin(relation2id.keys())) &
-            (valid_df["target"].isin(entity2id.keys()))
-        ]
-        all_true |= triples_to_id_set(valid_df_filtered, entity2id, relation2id)
-        print(f"Validation triples loaded: {len(valid_df_filtered)}")
-    except FileNotFoundError:
-        print("No validation file found, proceeding without it.")
+    for dim in EMBEDDING_DIMS:
+        model_dir = os.path.join(OUTPUT_ROOT, f"dim_{dim}")
+        model_path = os.path.join(model_dir, "trimodel_model.pt")
+        output_path = os.path.join(model_dir, "Evaluation.txt")
 
-    print(f"\nTotal true triples for filtering: {len(all_true)}")
+        if not os.path.exists(model_path):
+            print(f"Skipping dimension {dim}: checkpoint not found at {model_path}")
+            continue
 
-    # Evaluate with batched computation
-    print("\nStarting evaluation...")
-    metrics = evaluate(
-        model,
-        test_triples,
-        all_true,
-        num_entities,
-        DEVICE,
-        batch_size=BATCH_SIZE
-    )
+        print(f"\n{'=' * 60}")
+        print(f"Evaluating TriModel with embedding dimension {dim}")
+        print(f"Loading model from {model_path}")
+        print(f"{'=' * 60}")
 
-    print("\n" + "=" * 50)
-    print("Evaluation Results (Filtered Ranking)")
-    print("=" * 50)
-    for k, v in metrics.items():
-        print(f"{k}: {v:.4f}")
-    
-    # Save results
-    save_results(metrics, OUTPUT_PATH)
+        model, entity2id, relation2id = load_model(model_path, DEVICE)
+        num_entities = len(entity2id)
+        num_relations = len(relation2id)
+
+        print(f"Model loaded: {num_entities} entities, {num_relations} relations")
+        print(f"Embedding dim: {model.dim} (total: {model.dim * 3} per entity/relation)")
+        print(f"\nTrain triples: {len(train_df)}")
+        print(f"Test triples: {len(test_df)}")
+
+        test_df_filtered = test_df[
+            (test_df["source"].isin(entity2id.keys())) &
+            (test_df["relation"].isin(relation2id.keys())) &
+            (test_df["target"].isin(entity2id.keys()))
+        ].reset_index(drop=True)
+
+        print(f"Filtered test set: {len(test_df_filtered)} triples")
+
+        test_triples = encode_triples(test_df_filtered, entity2id, relation2id)
+
+        all_true = triples_to_id_set(train_df, entity2id, relation2id)
+        all_true |= triples_to_id_set(test_df_filtered, entity2id, relation2id)
+
+        if valid_df is not None:
+            valid_df_filtered = valid_df[
+                (valid_df["source"].isin(entity2id.keys())) &
+                (valid_df["relation"].isin(relation2id.keys())) &
+                (valid_df["target"].isin(entity2id.keys()))
+            ]
+            all_true |= triples_to_id_set(valid_df_filtered, entity2id, relation2id)
+            print(f"Validation triples loaded: {len(valid_df_filtered)}")
+        else:
+            print("No validation file found, proceeding without it.")
+
+        print(f"\nTotal true triples for filtering: {len(all_true)}")
+        print("\nStarting evaluation...")
+
+        metrics = evaluate(
+            model,
+            test_triples,
+            all_true,
+            num_entities,
+            DEVICE,
+            batch_size=BATCH_SIZE
+        )
+
+        print("\n" + "=" * 50)
+        print(f"Evaluation Results (Filtered Ranking, dim={dim})")
+        print("=" * 50)
+        for k, v in metrics.items():
+            print(f"{k}: {v:.4f}")
+
+        save_results(metrics, output_path)
+        summary_rows.append({"dimension": dim, **metrics})
+
+    if summary_rows:
+        summary_path = os.path.join(OUTPUT_ROOT, "evaluation_summary.csv")
+        pd.DataFrame(summary_rows).to_csv(summary_path, index=False)
+        print(f"\nSummary saved to {summary_path}")

@@ -439,11 +439,13 @@ def save_model(model, entity2id, relation2id, output_dir="outputs"):
 if __name__ == "__main__":
     set_seed(42)
 
+    embedding_dims = [100, 200, 300]
+
     # Use paths relative to project root (parent of this script's directory)
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     DATA_PATH = os.path.join(PROJECT_ROOT, "drugbank_facts.txt")
     DATA_DIR = os.path.join(PROJECT_ROOT, "data/trimodel")
-    OUTPUT_DIR = os.path.join(PROJECT_ROOT, "outputs_trimodel")
+    OUTPUT_ROOT = os.path.join(PROJECT_ROOT, "outputs_trimodel")
 
     df = load_triples(DATA_PATH)
     print("Dataset preview:")
@@ -474,21 +476,29 @@ if __name__ == "__main__":
     print(f"Validation triples (filtered): {len(valid_triples)}")
 
     device = "cpu"  # change to "cuda" if you have GPU
-    model, train_losses, valid_losses = train_trimodel(
-        train_triples=train_triples,
-        num_entities=len(entity2id),
-        num_relations=len(relation2id),
-        valid_triples=valid_triples,
-        dim=100,
-        reg_weight=0.01,
-        lr=1e-3,
-        batch_size=1024,
-        epochs=100,
-        device=device,
-        early_stopping_patience=10,
-        negative_samples=5,
-        loss_type="pairwise_logistic",  # Options: 'pairwise_logistic', 'bce', 'pairwise_hinge', etc.
-    )
+    for dim in embedding_dims:
+        set_seed(42)
+        output_dir = os.path.join(OUTPUT_ROOT, f"dim_{dim}")
+        print(f"\n{'=' * 60}")
+        print(f"Training TriModel with embedding dimension {dim}")
+        print(f"Outputs will be saved to: {output_dir}")
+        print(f"{'=' * 60}")
 
-    save_outputs(OUTPUT_DIR, train_losses, valid_losses, entity2id, relation2id, model)
-    save_model(model, entity2id, relation2id, output_dir=OUTPUT_DIR)
+        model, train_losses, valid_losses = train_trimodel(
+            train_triples=train_triples,
+            num_entities=len(entity2id),
+            num_relations=len(relation2id),
+            valid_triples=valid_triples,
+            dim=dim,
+            reg_weight=0.01,
+            lr=1e-3,
+            batch_size=1024,
+            epochs=100,
+            device=device,
+            early_stopping_patience=10,
+            negative_samples=5,
+            loss_type="pairwise_logistic",  # Options: 'pairwise_logistic', 'bce', 'pairwise_hinge', etc.
+        )
+
+        save_outputs(output_dir, train_losses, valid_losses, entity2id, relation2id, model)
+        save_model(model, entity2id, relation2id, output_dir=output_dir)
