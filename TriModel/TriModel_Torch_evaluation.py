@@ -8,8 +8,8 @@ Computes filtered metrics: MRR, Hits@1, Hits@3, Hits@10
 import os
 import sys
 
-# Add current directory to path for utils import
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add project root to path for utils import
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
 import numpy as np

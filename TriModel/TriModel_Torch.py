@@ -15,7 +15,7 @@ import os
 import sys
 
 # Add parent directory to path for utils import
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import random
 import numpy as np
@@ -183,7 +183,7 @@ def train_trimodel(
     lr_scheduler_patience: int = 5,
     lr_scheduler_factor: float = 0.5,
     negative_samples: int = 1,
-    loss_type: str = "pairwise_logistic",
+    loss_type: str = "bce",
 ):
     """
     Train TriModel.
@@ -497,7 +497,7 @@ if __name__ == "__main__":
             device=device,
             early_stopping_patience=10,
             negative_samples=5,
-            loss_type="pairwise_logistic",  # Options: 'pairwise_logistic', 'bce', 'pairwise_hinge', etc.
+            loss_type="bce",  # Options: 'pairwise_logistic', 'bce', 'pairwise_hinge', etc.
         )
 
         save_outputs(output_dir, train_losses, valid_losses, entity2id, relation2id, model)
