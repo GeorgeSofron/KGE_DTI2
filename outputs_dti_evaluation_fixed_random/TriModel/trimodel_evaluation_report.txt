@@ -1,0 +1,32 @@
+DTI EVALUATION - TRIMODEL (ALL DIMENSIONS)
+============================================================
+Model: TriModel
+Dimensions evaluated: [100, 200, 300]
+DTI relation: DRUG_TARGET
+Negative ratio: 10:1
+Negative sampling: random
+Seed: 42
+
+Results by Dimension:
+------------------------------------------------------------
+
+Dimension 100:
+  AUC-ROC: 0.7351
+  AUC-PR : 0.3737
+  Best F1: 0.4006 (thr=2.6270)
+  Precision/Recall@Best: 0.4647/0.3521
+  Pos/Neg: 2894/28525
+
+Dimension 200:
+  AUC-ROC: 0.8257
+  AUC-PR : 0.4533
+  Best F1: 0.4680 (thr=2.6682)
+  Precision/Recall@Best: 0.4845/0.4527
+  Pos/Neg: 2894/28525
+
+Dimension 300:
+  AUC-ROC: 0.8356
+  AUC-PR : 0.5315
+  Best F1: 0.5268 (thr=1.2201)
+  Precision/Recall@Best: 0.5917/0.4748
+  Pos/Neg: 2894/28525

@@ -1,0 +1,97 @@
+DTI EVALUATION - MULTI-MODEL, MULTI-DIMENSION SUMMARY
+======================================================================
+Models evaluated: ['TransE', 'ComplEx', 'TriModel']
+Dimensions evaluated: [100, 200, 300]
+DTI relation: DRUG_TARGET
+Negative ratio: 10:1
+Negative sampling: random
+Seed: 42
+Data source: data/trimodel
+
+Results Summary (All Models & Dimensions):
+----------------------------------------------------------------------
+   Model  Dimension  AUC-ROC   AUC-PR  Best_F1
+ ComplEx        100 0.820261 0.544538 0.535955
+ ComplEx        200 0.823619 0.575272 0.562781
+ ComplEx        300 0.832402 0.601395 0.586256
+  TransE        100 0.685702 0.287294 0.308943
+  TransE        200 0.715469 0.357166 0.367396
+  TransE        300 0.731275 0.382468 0.383782
+TriModel        100 0.735108 0.373682 0.400629
+TriModel        200 0.825735 0.453293 0.468024
+TriModel        300 0.835583 0.531482 0.526840
+
+Detailed Results by Model:
+======================================================================
+
+TRANSE:
+----------------------------------------------------------------------
+  Dimension 100:
+    AUC-ROC: 0.6857
+    AUC-PR : 0.2873
+    Best F1: 0.3089 (thr=-11.4450)
+    Precision/Recall@Best: 0.2972/0.3217
+    Pos/Neg: 2894/28525
+
+  Dimension 200:
+    AUC-ROC: 0.7155
+    AUC-PR : 0.3572
+    Best F1: 0.3674 (thr=-15.2036)
+    Precision/Recall@Best: 0.4326/0.3193
+    Pos/Neg: 2894/28525
+
+  Dimension 300:
+    AUC-ROC: 0.7313
+    AUC-PR : 0.3825
+    Best F1: 0.3838 (thr=-18.6838)
+    Precision/Recall@Best: 0.4178/0.3549
+    Pos/Neg: 2894/28525
+
+
+COMPLEX:
+----------------------------------------------------------------------
+  Dimension 100:
+    AUC-ROC: 0.8203
+    AUC-PR : 0.5445
+    Best F1: 0.5360 (thr=-0.2155)
+    Precision/Recall@Best: 0.6062/0.4803
+    Pos/Neg: 2894/28525
+
+  Dimension 200:
+    AUC-ROC: 0.8236
+    AUC-PR : 0.5753
+    Best F1: 0.5628 (thr=-0.4373)
+    Precision/Recall@Best: 0.6894/0.4755
+    Pos/Neg: 2894/28525
+
+  Dimension 300:
+    AUC-ROC: 0.8324
+    AUC-PR : 0.6014
+    Best F1: 0.5863 (thr=-0.8101)
+    Precision/Recall@Best: 0.7092/0.4997
+    Pos/Neg: 2894/28525
+
+
+TRIMODEL:
+----------------------------------------------------------------------
+  Dimension 100:
+    AUC-ROC: 0.7351
+    AUC-PR : 0.3737
+    Best F1: 0.4006 (thr=2.6270)
+    Precision/Recall@Best: 0.4647/0.3521
+    Pos/Neg: 2894/28525
+
+  Dimension 200:
+    AUC-ROC: 0.8257
+    AUC-PR : 0.4533
+    Best F1: 0.4680 (thr=2.6682)
+    Precision/Recall@Best: 0.4845/0.4527
+    Pos/Neg: 2894/28525
+
+  Dimension 300:
+    AUC-ROC: 0.8356
+    AUC-PR : 0.5315
+    Best F1: 0.5268 (thr=1.2201)
+    Precision/Recall@Best: 0.5917/0.4748
+    Pos/Neg: 2894/28525
+

@@ -1,0 +1,32 @@
+DTI EVALUATION - TRANSE (ALL DIMENSIONS)
+============================================================
+Model: TransE
+Dimensions evaluated: [100, 200, 300]
+DTI relation: DRUG_TARGET
+Negative ratio: 10:1
+Negative sampling: random
+Seed: 42
+
+Results by Dimension:
+------------------------------------------------------------
+
+Dimension 100:
+  AUC-ROC: 0.6857
+  AUC-PR : 0.2873
+  Best F1: 0.3089 (thr=-11.4450)
+  Precision/Recall@Best: 0.2972/0.3217
+  Pos/Neg: 2894/28525
+
+Dimension 200:
+  AUC-ROC: 0.7155
+  AUC-PR : 0.3572
+  Best F1: 0.3674 (thr=-15.2036)
+  Precision/Recall@Best: 0.4326/0.3193
+  Pos/Neg: 2894/28525
+
+Dimension 300:
+  AUC-ROC: 0.7313
+  AUC-PR : 0.3825
+  Best F1: 0.3838 (thr=-18.6838)
+  Precision/Recall@Best: 0.4178/0.3549
+  Pos/Neg: 2894/28525

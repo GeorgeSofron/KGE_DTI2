@@ -1,0 +1,16 @@
+DTI EVALUATION - COMPLEX (Dimension 300)
+============================================================
+Model: ComplEx
+Embedding dimension: 300
+DTI relation: DRUG_TARGET
+Negative ratio: 10:1
+Negative sampling: random
+Seed: 42
+
+Results:
+  AUC-ROC: 0.8324
+  AUC-PR : 0.6014
+  Best F1: 0.5863 (thr=-0.8101)
+  Precision/Recall@Best: 0.7092/0.4997
+  Pos/Neg: 2894/28525
+  Dropped test positives (OOV): 603
