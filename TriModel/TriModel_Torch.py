@@ -28,6 +28,11 @@ import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 
 from utils.model import TriModel, compute_kge_loss, pairwise_logistic_loss, bce_loss
+from utils.negative_sampling import (
+    build_true_triples_set,
+    compute_bern_probs,
+    corrupt_triples,
+)
 
 
 # ----------------------------
@@ -96,51 +101,8 @@ def save_splits(
 
 
 # ----------------------------
-# Negative sampling
+# Negative sampling: see utils.negative_sampling (vectorized, supports bern).
 # ----------------------------
-def build_true_triples_set(triples: torch.Tensor) -> set:
-    """Convert tensor of triples to a set of tuples for O(1) lookup."""
-    return set(map(tuple, triples.cpu().numpy().tolist()))
-
-
-def corrupt_triples(
-    pos_triples: torch.Tensor,
-    num_entities: int,
-    true_triples: set = None,
-    max_attempts: int = 10
-) -> torch.Tensor:
-    """
-    Create one negative triple for each positive triple by corrupting head OR tail.
-    """
-    neg = pos_triples.clone().cpu()
-    batch_size = neg.size(0)
-
-    mask = torch.rand(batch_size) < 0.5  # True => corrupt head, else tail
-    
-    for i in range(batch_size):
-        h, r, t = neg[i].tolist()
-        
-        for _ in range(max_attempts):
-            random_entity = torch.randint(low=0, high=num_entities, size=(1,)).item()
-            
-            if mask[i]:  # Corrupt head
-                candidate = (random_entity, r, t)
-            else:  # Corrupt tail
-                candidate = (h, r, random_entity)
-            
-            if true_triples is None or candidate not in true_triples:
-                if mask[i]:
-                    neg[i, 0] = random_entity
-                else:
-                    neg[i, 2] = random_entity
-                break
-        else:
-            if mask[i]:
-                neg[i, 0] = random_entity
-            else:
-                neg[i, 2] = random_entity
-    
-    return neg
 
 
 # ----------------------------
@@ -153,12 +115,17 @@ def compute_validation_loss(
     num_entities: int,
     true_triples: set,
     loss_type: str,
-    device: str
+    device: str,
+    neg_mode: str = "unif",
+    bern_probs: torch.Tensor = None,
 ) -> float:
     """Compute average loss on validation set."""
     model.eval()
     valid_triples = valid_triples.to(device)
-    neg = corrupt_triples(valid_triples, num_entities, true_triples).to(device)
+    neg = corrupt_triples(
+        valid_triples, num_entities, true_triples,
+        mode=neg_mode, bern_probs=bern_probs,
+    ).to(device)
     
     pos_scores = model(valid_triples)
     neg_scores = model(neg)
@@ -184,6 +151,7 @@ def train_trimodel(
     lr_scheduler_factor: float = 0.5,
     negative_samples: int = 1,
     loss_type: str = "bce",
+    neg_mode: str = "unif",
 ):
     """
     Train TriModel.
@@ -222,6 +190,11 @@ def train_trimodel(
 
     # Build set of true triples for filtering
     true_triples = build_true_triples_set(train_triples) if filter_negatives else None
+
+    bern_probs = (
+        compute_bern_probs(train_triples, num_relations)
+        if neg_mode == "bern" else None
+    )
     
     # Early stopping
     best_valid_loss = float('inf')
@@ -252,7 +225,12 @@ def train_trimodel(
             # Generate multiple negative samples
             neg_list = []
             for _ in range(negative_samples):
-                neg_list.append(corrupt_triples(pos, num_entities, true_triples).to(device))
+                neg_list.append(
+                    corrupt_triples(
+                        pos, num_entities, true_triples,
+                        mode=neg_mode, bern_probs=bern_probs,
+                    ).to(device)
+                )
             neg = torch.cat(neg_list, dim=0)
 
             # Compute scores
@@ -286,7 +264,8 @@ def train_trimodel(
         # Validation and early stopping
         if use_early_stopping:
             valid_loss = compute_validation_loss(
-                model, valid_triples, num_entities, true_triples, loss_type, device
+                model, valid_triples, num_entities, true_triples, loss_type, device,
+                neg_mode=neg_mode, bern_probs=bern_probs,
             )
             valid_losses_per_epoch.append(valid_loss)
             

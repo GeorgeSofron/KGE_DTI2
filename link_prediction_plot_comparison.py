@@ -229,10 +229,24 @@ def plot_overall_grid(df: pd.DataFrame):
         ax.grid(alpha=0.3, linestyle="--")
 
     handles, labels = axes[0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper center", ncol=3, framealpha=0.95)
-    fig.suptitle("Link Prediction: Model Progression Across Dimensions", fontsize=15, fontweight="bold", y=0.98)
+    fig.suptitle(
+        "Link Prediction: Model Progression Across Dimensions",
+        fontsize=15,
+        fontweight="bold",
+        y=0.99,
+    )
+    fig.legend(
+        handles,
+        labels,
+        loc="lower center",
+        ncol=len(labels),
+        framealpha=0.95,
+        bbox_to_anchor=(0.5, 0.0),
+    )
 
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    # Reserve top space for suptitle and bottom space for the figure-level legend
+    # so they no longer overlap subplot content or each other.
+    plt.tight_layout(rect=[0, 0.06, 1, 0.95])
     out_path = os.path.join(COMPARISON_DIR, "03_overall_progression_grid.png")
     plt.savefig(out_path, dpi=150, bbox_inches="tight")
     plt.close()
