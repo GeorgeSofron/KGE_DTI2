@@ -1,7 +1,0 @@
-TriModel (Degree-Matched Negatives) Training Timing
-==================================================
-Epochs run        : 16
-Total train time  : 00:12:09 (729.22 s)
-Average epoch time: 45.58 s
-Min epoch time    : 44.45 s
-Max epoch time    : 47.45 s

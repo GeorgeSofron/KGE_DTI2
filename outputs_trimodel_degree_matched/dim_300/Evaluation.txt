@@ -1,8 +1,0 @@
-TriModel (Degree-Matched Negatives) Evaluation Results (Filtered Ranking)
-==================================================
-
-MRR: 0.5668
-Hits@1: 0.5049
-Hits@3: 0.5983
-Hits@10: 0.6819
-Mean Rank: 1207.7260

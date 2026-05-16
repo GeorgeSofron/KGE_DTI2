@@ -1,7 +1,0 @@
-ComplEx (Degree-Matched Negatives) Evaluation Results
-========================================
-
-MRR: 0.4911
-Hits@1: 0.3957
-Hits@3: 0.5518
-Hits@10: 0.6499
