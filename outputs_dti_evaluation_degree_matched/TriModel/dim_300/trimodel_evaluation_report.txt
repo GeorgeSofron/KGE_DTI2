@@ -1,0 +1,16 @@
+DTI EVALUATION - TRIMODEL (Dimension 300)
+============================================================
+Model: TriModel
+Embedding dimension: 300
+DTI relation: DRUG_TARGET
+Negative ratio: 10:1
+Negative sampling: degree_matched
+Seed: 42
+
+Results:
+  AUC-ROC: 0.7613
+  AUC-PR : 0.3935
+  Best F1: 0.4332 (thr=-0.3859)
+  Precision/Recall@Best: 0.5469/0.3587
+  Pos/Neg: 2894/30309
+  Dropped test positives (OOV): 603

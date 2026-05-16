@@ -1,0 +1,7 @@
+TransE (Degree-Matched Negatives) Evaluation Results (dim=200)
+==================================================
+
+MRR: 0.3445
+Hits@1: 0.2675
+Hits@3: 0.3890
+Hits@10: 0.4746

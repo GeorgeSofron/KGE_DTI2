@@ -1,0 +1,87 @@
+Drug-Target Interaction Prediction GUI - Description
+===================================================
+
+Overview
+--------
+A desktop application built with Python Tkinter for interactive Drug-Target
+Interaction (DTI) prediction using pre-trained Knowledge Graph Embedding models.
+It provides a point-and-click interface over the same models evaluated in
+DTI/dti_evaluation.py, allowing users to query individual predictions without
+writing any code.
+
+
+Layout - 5 Numbered Sections
+----------------------------
+
+1. Select Model
+The top panel controls which model is loaded into memory.
+
+- Radio buttons: Choose between TransE, ComplEx, or TriModel
+- Dimension dropdown: Select embedding size: 100, 200, or 300 (defaults to 300)
+- Load Model button: Loads the checkpoint from outputs_{model}/dim_{dim}/{model}_model.pt in a background thread so the UI remains responsive
+- Status label: Shows red "No model loaded" until a checkpoint is successfully read, then turns green with model name and dimension
+
+
+2. Select Prediction Task
+Three mutually exclusive prediction modes:
+
+- Score Drug-Target Pair: Computes a single plausibility score and confidence for one (drug, protein) pair
+- Predict Targets for Drug: Given a drug, ranks all known proteins by plausibility and returns the top-K
+- Predict Drugs for Target: Given a protein, ranks all known drugs by plausibility and returns the top-K
+
+Selecting a mode dynamically enables or disables the relevant input fields.
+
+
+3. Enter Query
+- Drug field: autocomplete combobox filtered to entities starting with DB (DrugBank IDs); typing filters the list live
+- Target field: autocomplete combobox filtered to P* / Q* UniProt IDs; disabled when not needed for the selected task
+- Top-K spinner: number of results to return (1-500, default 20)
+- Show Novel Only: filters results to pairs not seen during training
+- Show Known Only: filters to pairs that were in the training set
+- Min Confidence %: hides results below a confidence threshold
+
+
+4. Prediction Results
+A results table with the following columns:
+
+- Rank: ordered position (1 = best)
+- Drug: DrugBank ID
+- Target: UniProt protein ID
+- Score: raw model plausibility score
+- Confidence: score normalised to 0-100%
+- Status: NOVEL (not in training) or KNOWN (seen in training)
+
+Rows are colour-coded:
+- Green for novel predictions
+- Orange for known pairs
+
+Below the table, a summary console shows entity counts on model load and
+prediction statistics (total results, novel vs known split) after each query.
+
+
+5. Status Bar
+A persistent bottom bar shows the current operation state: Ready, loading
+progress, or a summary of the last completed prediction.
+
+
+Action Buttons
+--------------
+- Run Prediction: executes the selected task in a background thread
+- Export to CSV: saves the current results table to a timestamped CSV file
+- Clear Results: empties the results table and summary console
+
+
+Confidence Score Conversion
+---------------------------
+Raw model scores are converted to percentages differently per model type:
+
+- TransE (distance-based, lower = better): conf = 100 / (1 + score)
+- ComplEx / TriModel (dot product, higher = better): conf = 100 / (1 + e^-score)
+
+
+Technical Notes
+---------------
+- Model loading and all inference run in background threads so the GUI stays responsive
+- Autocomplete dropdowns show the first 100 matching entries, filtered live on keypress
+- Novel/Known detection compares each result against the training split's DRUG_TARGET pairs loaded at model load time
+- The window is resizable and the results table expands with it

@@ -1,0 +1,16 @@
+DTI EVALUATION - TRANSE (Dimension 200)
+============================================================
+Model: TransE
+Embedding dimension: 200
+DTI relation: DRUG_TARGET
+Negative ratio: 10:1
+Negative sampling: degree_matched
+Seed: 42
+
+Results:
+  AUC-ROC: 0.6516
+  AUC-PR : 0.2487
+  Best F1: 0.2931 (thr=-14.9202)
+  Precision/Recall@Best: 0.3257/0.2664
+  Pos/Neg: 2894/30309
+  Dropped test positives (OOV): 603
