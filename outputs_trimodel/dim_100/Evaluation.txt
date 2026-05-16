@@ -1,8 +1,0 @@
-TriModel Evaluation Results (Filtered Ranking)
-==================================================
-
-MRR: 0.5807
-Hits@1: 0.5209
-Hits@3: 0.6078
-Hits@10: 0.6943
-Mean Rank: 802.9145

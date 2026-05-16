@@ -1,2 +1,0 @@
-Model,Dimension,AUC-ROC,AUC-PR,Best_F1,Best_Threshold,Precision@Best_F1,Recall@Best_F1,n_positives,n_negatives,dropped_test_positives,neg_ratio,neg_sampling,seed
-TriModel,200,0.8257346730247294,0.4532931269051678,0.46802429439085386,2.668196201324463,0.4844674556213018,0.4526606772633034,2894,28525,603,10,random,42
