@@ -8,9 +8,9 @@ Negative sampling: degree_matched
 Seed: 42
 
 Results:
-  AUC-ROC: 0.7049
-  AUC-PR : 0.2576
-  Best F1: 0.3207 (thr=2.8736)
-  Precision/Recall@Best: 0.3235/0.3179
+  AUC-ROC: 0.6957
+  AUC-PR : 0.2267
+  Best F1: 0.3094 (thr=2.7728)
+  Precision/Recall@Best: 0.2803/0.3452
   Pos/Neg: 2894/30309
   Dropped test positives (OOV): 603

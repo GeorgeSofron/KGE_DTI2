@@ -11,22 +11,22 @@ Results by Dimension:
 ------------------------------------------------------------
 
 Dimension 100:
-  AUC-ROC: 0.7778
-  AUC-PR : 0.4040
-  Best F1: 0.4361 (thr=0.0917)
-  Precision/Recall@Best: 0.4297/0.4426
+  AUC-ROC: 0.7782
+  AUC-PR : 0.4147
+  Best F1: 0.4426 (thr=-0.0999)
+  Precision/Recall@Best: 0.4241/0.4627
   Pos/Neg: 2894/30309
 
 Dimension 200:
-  AUC-ROC: 0.7878
-  AUC-PR : 0.4517
-  Best F1: 0.4685 (thr=-0.0024)
-  Precision/Recall@Best: 0.5112/0.4323
+  AUC-ROC: 0.7880
+  AUC-PR : 0.4472
+  Best F1: 0.4753 (thr=-0.1380)
+  Precision/Recall@Best: 0.5015/0.4516
   Pos/Neg: 2894/30309
 
 Dimension 300:
-  AUC-ROC: 0.7985
-  AUC-PR : 0.4791
-  Best F1: 0.4987 (thr=-0.2834)
-  Precision/Recall@Best: 0.5577/0.4509
+  AUC-ROC: 0.7954
+  AUC-PR : 0.4652
+  Best F1: 0.4908 (thr=-0.5933)
+  Precision/Recall@Best: 0.5055/0.4768
   Pos/Neg: 2894/30309
